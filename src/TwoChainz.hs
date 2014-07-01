@@ -10,9 +10,10 @@ import Safe
 import qualified Data.ByteString.Char8 as BC
 
 import TwoChainz.Chain
+import TwoChainz.Util.Paths (expandUser)
 
-keyFile :: String
-keyFile = "/home/smith/.keys"
+getKeyFile :: IO FilePath
+getKeyFile = expandUser "~/.keys"
 
 invalidArgs :: IO ()
 invalidArgs = putStrLn "Invalid number of arguments"
@@ -21,7 +22,8 @@ invalidArgs = putStrLn "Invalid number of arguments"
 get :: [String] -> IO ()
 get args = if length args /= 1 then invalidArgs else
     let (account:[]) = args in do
-        result <- retrievePassword keyFile . BC.pack $ account
+        keyFile <- getKeyFile
+        result  <- retrievePassword keyFile . BC.pack $ account
         case result of
             Just password -> putStrLn $ BC.unpack password
             Nothing       -> hPutStrLn stderr "Not found"
@@ -29,7 +31,8 @@ get args = if length args /= 1 then invalidArgs else
 set :: [String] -> IO ()
 set args = if length args /= 2 then invalidArgs else
     let (account:password:[]) = args in do
-        writePassword keyFile $ join bimap BC.pack $ (account, password)
+        keyFile <- getKeyFile
+        writePassword keyFile . join bimap BC.pack $ (account, password)
         putStrLn $ "Wrote password for account \"" ++ account ++ "\""
 
 main :: IO ()
