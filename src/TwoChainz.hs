@@ -39,8 +39,9 @@ main :: IO ()
 main = do
     args <- getArgs
     case headMay args of
-        Just "get"   -> get $ tail args
-        Just "set"   -> set $ tail args
-        Just command -> putStrLn $ "Unrecognized command: " ++ command
-        Nothing      -> invalidArgs
+        Just "get"      -> get $ tail args
+        Just "set"      -> set $ tail args
+        Just "shoutout" -> putStrLn "What up, wrist!"
+        Just command    -> putStrLn $ "Unrecognized command: " ++ command
+        Nothing         -> invalidArgs
 
