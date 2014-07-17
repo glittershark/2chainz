@@ -7,7 +7,7 @@ import Control.Monad
 import Control.Applicative
 import Data.Bifunctor
 import System.Environment
-import Safe
+import Safe (headMay)
 import qualified Data.ByteString.Char8 as BC
 
 import TwoChainz.Chain
@@ -26,7 +26,7 @@ get :: [String] -> IO ()
 get args = if length args /= 1 then invalidArgs else
     let (account:[]) = args in do
         chainFile <- getChainFile
-        result  <- retrievePassword chainFile . BC.pack $ account
+        result    <- retrievePassword chainFile . BC.pack $ account
         case result of
             Just password -> putStrLn $ BC.unpack password
             Nothing       -> hPutStrLn stderr "Not found"
