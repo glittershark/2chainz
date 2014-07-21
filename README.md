@@ -1,4 +1,4 @@
-2chainz
+2chainz [![Build Status](https://travis-ci.org/glittershark/2chainz.svg?branch=master)](https://travis-ci.org/glittershark/2chainz)
 =======
 Keychain management fo' playaz
 
