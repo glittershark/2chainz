@@ -8,19 +8,22 @@ module TwoChainz.Config
 
 import Control.Applicative
 import Control.Monad
-import Data.Char  (toLower)
 import Data.Maybe (fromMaybe)
+import Data.Text  (Text, toLower)
 import Data.Yaml
 
 import TwoChainz.Util.Paths (expandUser)
 
 data AuthType = File | Ask -- TODO add more
 
-fromString :: String -> Maybe AuthType
-fromString str = case map toLower str of
+fromString :: Text -> Maybe AuthType
+fromString str = case toLower str of
     "file" -> Just File
     "ask"  -> Just Ask
     _      -> Nothing
+
+instance FromJSON AuthType where
+    parseJSON (String v) = return . fromMaybe File $ fromString v
 
 data Config = Config { keyFile  :: String
                      , authType :: AuthType }
@@ -28,7 +31,7 @@ data Config = Config { keyFile  :: String
 instance FromJSON Config where
     parseJSON (Object v) = Config                          <$>
                            v .:? "keyFile"  .!= "~/.keys"  <*>
-                          (v .:? "authType" >>= return . fromString . fromMaybe "file") .!= File
+                           v .:? "authType" .!= File
     parseJSON _          = mzero
 
 configFile :: FilePath
