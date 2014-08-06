@@ -33,7 +33,7 @@ encryptToFile :: Key -> FilePath -> B.ByteString -> IO ()
 encryptToFile key path plaintext = do
     Right (iv, _) <- genBytes 128 <$> (newGenIO :: IO HashDRBG)
 
-    let ciphertext = B.append iv $
+    let ciphertext = B.append iv .
             AES.encryptCBC (AES.initAES key) iv . pad $ plaintext
     B.writeFile path ciphertext
 
@@ -41,7 +41,7 @@ decryptFile :: Key -> FilePath -> IO B.ByteString
 decryptFile key path = do
     (iv, plaintext) <- B.splitAt 128 <$> B.readFile path
     let context = AES.initAES key
-    return $ unpad . AES.decryptCBC context iv . pad $ plaintext
+    return . unpad . AES.decryptCBC context iv . pad $ plaintext
 
 
 -- vim:ts=4 sts=4 sw=4:
