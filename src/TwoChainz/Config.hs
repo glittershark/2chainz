@@ -24,6 +24,7 @@ fromString str = case toLower str of
 
 instance FromJSON AuthType where
     parseJSON (String v) = return . fromMaybe File $ fromString v
+    parseJSON _          = mzero
 
 data Config = Config { keyFile  :: String
                      , authType :: AuthType }
@@ -42,5 +43,7 @@ defaultConfig = Config { keyFile  = "~/keys"
                        , authType = File }
 
 getConfig :: IO Config
-getConfig = expandUser configFile >>= decodeFile >>= return . fromMaybe defaultConfig
+getConfig = expandUser configFile >>=
+            decodeFile >>=
+            return . fromMaybe defaultConfig
 
