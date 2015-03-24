@@ -6,6 +6,7 @@ module TwoChainz.Config
         , getConfig
         ) where
 
+import System.Directory (doesFileExist)
 import Control.Applicative
 import Control.Monad
 import Data.Maybe (fromMaybe)
@@ -42,8 +43,15 @@ defaultConfig :: Config
 defaultConfig = Config { keyFile  = "~/keys"
                        , authType = File }
 
+decodeIfExists :: FromJSON a => FilePath -> IO (Maybe a)
+decodeIfExists filename = do
+        exists <- doesFileExist filename
+        if exists
+            then decodeFile filename
+            else return Nothing
+
 getConfig :: IO Config
 getConfig = expandUser configFile >>=
-            decodeFile >>=
+            decodeIfExists        >>=
             return . fromMaybe defaultConfig
 
