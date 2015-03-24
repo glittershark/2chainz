@@ -17,8 +17,7 @@ import TwoChainz.Util.Getpass (getPassword)
 import TwoChainz.Config
 
 invalidArgs :: IO ()
-invalidArgs = putStrLn "Invalid number of arguments"
-
+invalidArgs = hPutStrLn stderr "Invalid number of arguments"
 
 get :: Config -> [String] -> IO ()
 get config args = if length args /= 1 then invalidArgs else
@@ -28,7 +27,6 @@ get config args = if length args /= 1 then invalidArgs else
         case result of
             Just password -> putStrLn $ BC.unpack password
             Nothing       -> hPutStrLn stderr "Not found"
-
 
 parseSetArgs :: [String] -> IO (Account, Password)
 parseSetArgs args = join bimap BC.pack <$> case args of
@@ -44,7 +42,6 @@ set config args = if length args > 2 then invalidArgs else do
 
     let account = BC.unpack $ fst pair
     putStrLn $ "Wrote password for account \"" ++ account ++ "\""
-
 
 main :: IO ()
 main = do
