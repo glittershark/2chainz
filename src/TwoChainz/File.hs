@@ -39,10 +39,9 @@ encryptToFile key path plaintext = do
 
 decryptFile :: Key -> FilePath -> IO B.ByteString
 decryptFile key path = do
-    (iv, plaintext) <- B.splitAt 128 <$> B.readFile path
+    (iv, ciphertext) <- B.splitAt 128 <$> B.readFile path
     let context = AES.initAES key
-    return . unpad . AES.decryptCBC context iv . pad $ plaintext
-
+    return . unpad . AES.decryptCBC context iv . pad $ ciphertext
 
 -- vim:ts=4 sts=4 sw=4:
 
